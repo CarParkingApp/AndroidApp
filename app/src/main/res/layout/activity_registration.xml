@@ -12,9 +12,11 @@
         android:orientation="vertical"
         android:padding="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
@@ -32,18 +34,19 @@
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="dp" />
 
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="18dp"
+            android:layout_height="10dp"
             android:orientation="horizontal"></LinearLayout>
 
         <EditText
-            android:id="@+id/editText3"
+            android:id="@+id/ninEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.00"
             android:ems="10"
-            android:hint="First Name"
+            android:hint="NIN"
             android:inputType="textPersonName" />
 
         <LinearLayout
@@ -52,35 +55,7 @@
             android:orientation="horizontal"></LinearLayout>
 
         <EditText
-            android:id="@+id/editText4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.00"
-            android:ems="10"
-            android:hint="Last Name"
-            android:inputType="textPersonName" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:orientation="horizontal"></LinearLayout>
-
-        <EditText
-            android:id="@+id/editText5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.00"
-            android:ems="10"
-            android:hint="Middle Name"
-            android:inputType="textPersonName" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:orientation="horizontal"></LinearLayout>
-
-        <EditText
-            android:id="@+id/editText6"
+            android:id="@+id/usernameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.00"
@@ -94,7 +69,7 @@
             android:orientation="horizontal"></LinearLayout>
 
         <EditText
-            android:id="@+id/editText7"
+            android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.00"
@@ -110,13 +85,13 @@
         </LinearLayout>
 
         <EditText
-            android:id="@+id/editText10"
+            android:id="@+id/phonenumberEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.00"
             android:ems="10"
-            android:inputType="phone"
-            android:hint="Phone Number"/>
+            android:hint="Phone Number"
+            android:inputType="phone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -126,7 +101,7 @@
         </LinearLayout>
 
         <EditText
-            android:id="@+id/editText8"
+            android:id="@+id/passwordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.00"
@@ -140,7 +115,7 @@
             android:orientation="horizontal"></LinearLayout>
 
         <EditText
-            android:id="@+id/editText9"
+            android:id="@+id/rptPasswordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.00"
@@ -148,13 +123,19 @@
             android:hint="Repeat Password"
             android:inputType="textPassword" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:orientation="horizontal"></LinearLayout>
+
         <Button
-            android:id="@+id/button"
+            android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.00"
+            android:background="@color/colorParkBarLight"
+            android:onClick="RegisterButton_Click"
             android:text="Register"
-            android:textColor="@color/white"
-            android:background="@color/colorParkBarLight"/>
+            android:textColor="@color/white" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

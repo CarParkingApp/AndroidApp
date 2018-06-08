@@ -14,7 +14,7 @@ public class Users {
     private String MiddleName;
     private String UserName;
     private String Email;
-    private int PhoneNumber;
+    private String PhoneNumber;
     private String Location;
 
     public int getID() {
@@ -25,7 +25,7 @@ public class Users {
         return Email;
     }
 
-    public int getPhoneNumber() {
+    public String getPhoneNumber() {
         return PhoneNumber;
     }
 
@@ -73,7 +73,7 @@ public class Users {
         MiddleName = middleName;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         PhoneNumber = phoneNumber;
     }
 
