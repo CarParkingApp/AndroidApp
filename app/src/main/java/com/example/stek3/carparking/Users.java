@@ -6,7 +6,11 @@ import android.location.Location;
  * Created by Stek3 on 04-Mar-18.
  */
 
+
+
 public class Users {
+
+    public static int CurrentUserID=0;
 
     private int ID;
     private String FirstName;

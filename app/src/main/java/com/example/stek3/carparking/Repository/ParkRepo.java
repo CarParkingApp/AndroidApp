@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.stek3.carparking.Adapters.NearByParksAdapter;
 import com.example.stek3.carparking.Fragments.Contacts_Fragment;
@@ -62,17 +64,17 @@ public class ParkRepo
 
     public boolean SynchronizeParks(Context context) {
 
-        SyncParks syncParks=new SyncParks(context);
+        SyncParksr syncParks=new SyncParksr(context);
         syncParks.execute();
 
         return  true;
     }
 
-    private class SyncParks extends AsyncTask<Void, Integer, List<Park>> {
+    private class SyncParksr extends AsyncTask<Void, Integer, List<Park>> {
 
         Context context;
 
-        public SyncParks(Context context) {
+        public SyncParksr(Context context) {
 
             this.context=context;
         }
@@ -120,53 +122,71 @@ public class ParkRepo
                     //Configure JSON DATA Here
 
                     JSONObject Data = new JSONObject(sb.toString());
-                    JSONArray DataValues = Data.getJSONArray("values");
+                    JSONArray DataValues=null;
 
 
-                    for (int count = 0; count < DataValues.length(); count++) {
-                        JSONObject FinalParkObject = DataValues.getJSONObject(count);
+                    int Code=Data.getInt("Code");
 
-                        finalPark=new Park();
-
-                        finalPark.setName(FinalParkObject.getString("name"));
-                        finalPark.setReference(FinalParkObject.getString("reference"));
-                        finalPark.setPlaceID(FinalParkObject.getString("place_id"));
-
-
-                        JSONObject ParkData = FinalParkObject.getJSONObject("Park Data");
-
-                        finalPark.setID(ParkData.getInt("park_id"));
-
-                        ImageDecoder imageDecoder=new ImageDecoder();
-                        finalPark.setImage(imageDecoder.DecodeImage(FinalParkObject.getString("place image")));
-
-                        Log.e("Final Image: ", FinalParkObject.getString("place image"));
-
-                        JSONObject FinalPlaceObject = ParkData.getJSONObject("Location");
-
-                        Park.Location finalParkLocation = new Park.Location();
-                        finalParkLocation.setVicinity(FinalPlaceObject.getString("name"));
-                        finalParkLocation.setLocationID(FinalPlaceObject.getInt("id"));
-                        finalParkLocation.setLatitude(FinalParkObject.getJSONObject("geometry").getJSONObject("location").getDouble("lat"));
-                        finalParkLocation.setLongitude(FinalParkObject.getJSONObject("geometry").getJSONObject("location").getDouble("lng"));
-
-
-                        JSONObject FinalSpaceObject = ParkData.getJSONObject("Space");
-
-                        Park.Spaces finalParkSpace = new Park.Spaces();
-                        finalParkSpace.setSpaceID(FinalSpaceObject.getInt("space id"));
-                        finalParkSpace.setSpaceCount(FinalSpaceObject.getInt("space count"));
-                        finalParkSpace.setUsedSpaces(FinalSpaceObject.getInt("used spaces"));
-
-                        finalPark.setLocation(finalParkLocation);
-                        finalPark.setSpaces(finalParkSpace);
-
-
-                        Log.e("re", finalPark.getName());
-
-                        Parks.add(finalPark);
+                    if(Code==404)
+                    {
+                        Looper.prepare();
+                        Toast.makeText(context,Data.get("Message").toString(),Toast.LENGTH_LONG).show();
                     }
+                        else {
 
+                        if(Data.isNull("Values")) {
+
+                            DataValues=null;
+
+                        }
+                        else {
+                            DataValues = Data.getJSONArray("Values");
+
+                            for (int count = 0; count < DataValues.length(); count++) {
+                                JSONObject FinalParkObject = DataValues.getJSONObject(count);
+
+                                finalPark = new Park();
+
+                                finalPark.setName(FinalParkObject.getString("name"));
+                                finalPark.setReference(FinalParkObject.getString("reference"));
+                                finalPark.setPlaceID(FinalParkObject.getString("place_id"));
+
+
+                                JSONObject ParkData = FinalParkObject.getJSONObject("Park Data");
+
+                                finalPark.setID(ParkData.getInt("park_id"));
+
+                                ImageDecoder imageDecoder = new ImageDecoder();
+                                finalPark.setImage(imageDecoder.DecodeImage(FinalParkObject.getString("place image")));
+
+                                Log.e("Final Image: ", FinalParkObject.getString("place image"));
+
+                                JSONObject FinalPlaceObject = ParkData.getJSONObject("Location");
+
+                                Park.Location finalParkLocation = new Park.Location();
+                                finalParkLocation.setVicinity(FinalPlaceObject.getString("name"));
+                                finalParkLocation.setLocationID(FinalPlaceObject.getInt("id"));
+                                finalParkLocation.setLatitude(FinalParkObject.getJSONObject("geometry").getJSONObject("location").getDouble("lat"));
+                                finalParkLocation.setLongitude(FinalParkObject.getJSONObject("geometry").getJSONObject("location").getDouble("lng"));
+
+
+                                JSONObject FinalSpaceObject = ParkData.getJSONObject("Space");
+
+                                Park.Spaces finalParkSpace = new Park.Spaces();
+                                finalParkSpace.setSpaceID(FinalSpaceObject.getInt("space id"));
+                                finalParkSpace.setSpaceCount(FinalSpaceObject.getInt("space count"));
+                                finalParkSpace.setUsedSpaces(FinalSpaceObject.getInt("used spaces"));
+
+                                finalPark.setLocation(finalParkLocation);
+                                finalPark.setSpaces(finalParkSpace);
+
+
+                                Log.e("re", finalPark.getName());
+
+                                Parks.add(finalPark);
+                            }
+                        }
+                    }
                 } else {
                     Log.e("testResponse", Con.getResponseMessage() + " " + String.valueOf(Con.getResponseCode()));
                     return null;

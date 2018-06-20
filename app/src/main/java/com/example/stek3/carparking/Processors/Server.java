@@ -7,24 +7,21 @@ import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.StringEntityHC4;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-
-import java.net.URI;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
-import static java.io.FileDescriptor.in;
+
 
 /**
  * Created by Juliet on 08-Jun-18.
@@ -35,60 +32,118 @@ public class Server {
 
     public static class Get extends AsyncTask<Void,Void,String> {
 
-        String url = "";
+        URL url;
         Context context;
+        HttpURLConnection conn;
+        String response;
 
-
-        public Get(Context context, String URL) {
+        public Get(Context context, String URL){
             this.context = context;
-            this.url = URL;
+
+            try
+            {
+                this.url = new URL(URL);
+
+            }
+            catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         protected String doInBackground(Void... params) {
 
 
-            String result = null;
-            InputStream inputStream = null;
+            String result = "";
+
+            Log.e("Running","True");
 
             try {
-                HttpClient httpclient = new DefaultHttpClient();
 
-                HttpGet request = new HttpGet();
-                URI website = new URI(url);
-                request.setURI(website);
-                HttpResponse httpResponse = httpclient.execute(request);
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
 
-                // 9. receive response as inputStream
-                inputStream = httpResponse.getEntity().getContent();
+                // read the response
+                InputStream in = new BufferedInputStream(conn.getInputStream());
+                response = in.toString();
 
-                // 10. convert inputstream to string
-                if (inputStream != null) {
+                Log.e("Input Stream",in.toString());
 
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line = "";
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder sb = new StringBuilder();
 
-                    while ((line = bufferedReader.readLine()) != null)
-                        result += line;
+                String output = null;
 
-                    inputStream.close();
+                while ((output = reader.readLine()) != null) {
 
-                } else {
-                    result = "Did not work!";
+                    sb.append(output);
                 }
 
-            } catch (Exception e) {
+                result=sb.toString();
 
-                Log.e("Response",e.toString());
+
+                Log.e("URL",url.toString());
+                Log.e("Response from Server",response);
+
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
+
+//            try {
+//                HttpClient httpclient = new DefaultHttpClient();
+//
+//                HttpGet request = new HttpGet();
+//                URI website = new URI(url);
+//                request.setURI(website);
+//                HttpResponse httpResponse = httpclient.execute(request);
+//
+//
+//
+//                // 9. receive response as inputStream
+//                inputStream = httpResponse.getEntity().getContent();
+//
+//                // 10. convert inputstream to string
+//                if (inputStream != null) {
+//
+//                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+//                    StringBuilder sb=new StringBuilder();
+//                    String line=null;
+//
+//                    while ((line = bufferedReader.readLine()) != null)
+//                        sb.append(line);
+//
+//                    result=sb.toString();
+//
+//                    inputStream.close();
+//
+//                } else {
+//                    result = "Did not work!";
+//                }
+//
+//            } catch (Exception e) {
+//
+//                Log.e("Response",e.toString());
+//            }
+
+
+
             return result;
+
+
+
         }
 
         @Override
         protected void onPostExecute(String s) {
 
-           // Toast.makeText(context,s,Toast.LENGTH_LONG).show();
+           Log.e("Result",s);
 
         }
 
@@ -111,6 +166,8 @@ public class Server {
 
         @Override
         protected String doInBackground(String... params) {
+
+            Response response=new Response();
 
             String JSON = params[0];
 
@@ -145,9 +202,11 @@ public class Server {
 
                     inputStream.close();
 
+
                 }
                 else {
-                    result = "Did not work!";
+
+                   result="Did not work!";
                 }
 
 
@@ -160,12 +219,10 @@ public class Server {
             return result;
         }
 
-
-
         @Override
         protected void onPostExecute(String s) {
 
-            Toast.makeText(context,s,Toast.LENGTH_LONG).show();
+           // Toast.makeText(context,s,Toast.LENGTH_LONG).show();
         }
     }
 }

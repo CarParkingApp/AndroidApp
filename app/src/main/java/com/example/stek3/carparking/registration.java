@@ -33,6 +33,8 @@ public class registration extends AppCompatActivity {
                 public void onClick(View v) {
 
                     userRepo.RegisterUser(NINBox.getText().toString(),UserNameBox.getText().toString(),EmailBox.getText().toString(),PhoneBox.getText().toString(),PasswordBox.getText().toString());
+
+
                 }
             });
 

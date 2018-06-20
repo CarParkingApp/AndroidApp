@@ -7,6 +7,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.inputmethodservice.Keyboard;
+import android.util.Log;
 
 import com.example.stek3.carparking.Users;
 
@@ -104,6 +105,7 @@ public class DbHelper extends SQLiteOpenHelper
         SQLiteDatabase db=getWritableDatabase();
         //db.execSQL("Truncate table "+Contract.UserTable.TABLE_NAME);
         db.delete(Contract.UserTable.TABLE_NAME,null,null);
+
 
         return true;
     }

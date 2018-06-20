@@ -1,6 +1,5 @@
 package com.example.stek3.carparking;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,30 +11,25 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.stek3.carparking.Adapters.NearByParksAdapter;
 import com.example.stek3.carparking.Parks.Park;
 import com.example.stek3.carparking.Repository.ParkRepo;
 import com.example.stek3.carparking.Repository.UserRepo;
 import com.example.stek3.carparking.SQLite.DbHelper;
-import com.example.stek3.carparking.Sync.Sync;
 import com.example.stek3.carparking.Sync.SyncParks;
+import com.example.stek3.carparking.Sync.SyncUser;
 import com.example.stek3.carparking.Views.ExtendedPlaces_View;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
@@ -49,8 +43,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.zip.Inflater;
+
+import static com.example.stek3.carparking.Users.CurrentUserID;
 
 public class home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,OnMapReadyCallback
@@ -67,6 +61,8 @@ public class home extends AppCompatActivity
     MapFragment mapFragment;
     CoordinatorLayout coordinatorLayout;
     View ExpandedList;
+
+    SyncUser s;
 
     TextView NameView,LocationView,UserNameView,EmailView;
     LinearLayout HomeContainer;
@@ -113,18 +109,19 @@ public class home extends AppCompatActivity
               .findFragmentById(R.id.fragment);
         mapFragment.getMapAsync(this);
 
-        Sync s=new Sync(this);
+        BackgroundWorker worker=new BackgroundWorker(this);
+        worker.execute();
+
+        s=new SyncUser(this);
         s.execute();
 
         //mapFragment.getMapAsync(home.this);
 
-        ParkRepo parkRepo=new ParkRepo();
-        parkRepo.SynchronizeParks(this);
+//       ParkRepo parkRepo=new ParkRepo();
+//       parkRepo.SynchronizeParks(this);
 
-
-        BackgroundWorker worker=new BackgroundWorker(this);
-        worker.execute();
-
+        SyncParks sp=new SyncParks(this);
+       sp.execute();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -227,19 +224,18 @@ public class home extends AppCompatActivity
             }
 
         }
-        else if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        else if(id==R.id.userLogout){
 
-        } else if (id == R.id.nav_slideshow) {
+            s.Stop();
 
-        } else if (id == R.id.nav_manage) {
+            DbHelper dbHelper=new DbHelper(this);
+            dbHelper.DeleteUsers();
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+            Intent SigninIntent=new Intent(this,MainActivity.class);
+            startActivity(SigninIntent);
 
         }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -252,6 +248,7 @@ public class home extends AppCompatActivity
         parkingMaps.setmMap(googleMap);
 
         parkingMaps.getDeviceLocation();
+
         parkingMaps.updateLocationUI();
 
         if(parkingMaps.getNearbyPlacesList()!=null)
@@ -265,10 +262,7 @@ public class home extends AppCompatActivity
 
                 yard.setName(googlePlace.get("place_name"));
 
-
             }
-
-
 
         }
 
@@ -320,7 +314,10 @@ public class home extends AppCompatActivity
             User = dbHelper.getUser();
         }
         else {
+            //
             User=new Users();
+            User=repo.getUser(CurrentUserID);
+            Log.e("No Usser","true");
         }
 
         User.setLocation(parkingMaps.getCurrentPlace());
@@ -333,8 +330,7 @@ public class home extends AppCompatActivity
         @Override
     protected void onPostExecute(Users result){
 
-
-            Log.e("from",result.getFirstName().toString());
+           // Log.e("from",result.getFirstName().toString());
 
             NameView.setText(result.getFirstName() + " " + result.getLastName());
             UserNameView.setText(result.getUserName());

@@ -25,6 +25,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * Created by Stek3 on 22-Mar-18.
  */
@@ -69,7 +71,18 @@ public class Maps_fragment extends Fragment implements OnMapReadyCallback {
 
                 if(isOn)
                 {
+                    Location CurrentPlace=parkingMaps.getCurrentLocation();
+                    Park.Location Origin=new Park.Location();
+                    Origin.setLatitude(CurrentPlace.getLatitude());
+                    Origin.setLongitude(CurrentPlace.getLongitude());
 
+                    try {
+                        parkingMaps.getParkingRoute(Origin,Origin);
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     buttonView.setText("ON");
                 }
                 else

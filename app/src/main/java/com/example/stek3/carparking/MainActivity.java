@@ -4,12 +4,20 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.stek3.carparking.Repository.UserRepo;
+
+import static com.example.stek3.carparking.Users.CurrentUserID;
 
 public class MainActivity extends AppCompatActivity {
+
+    UserRepo userRepo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +36,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        userRepo=new UserRepo(this);
+
         Button LoginButton=(Button) findViewById(R.id.loginbtn);
 
         LoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent HomeIntent=new Intent(getBaseContext(),home.class);
 
-                startActivity(HomeIntent);
+                String Message="";
+
+                if(userRepo.Login("danie@gmail.com","password")!=null){
+
+                    Message="Successful";
+
+                    Log.e("current userid2",String.valueOf(CurrentUserID));
+
+                    Intent HomeIntent=new Intent(getBaseContext(),home.class);
+
+                    startActivity(HomeIntent);
+
+                }
+                else {
+
+                    Message="Not Successful";
+                }
+
+                Toast.makeText(getBaseContext(),Message,Toast.LENGTH_LONG).show();
+
+
             }
         });
 
